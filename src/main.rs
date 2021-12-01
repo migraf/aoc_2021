@@ -32,20 +32,19 @@ fn day_1() {
         }
         previous = scan.clone();
     }
-    println!("{}", count);
+    println!("Task 1: {}", count);
     previous = scans.windows(3)
         .nth(0)
         .unwrap()
         .iter()
         .sum();
-    println!("{}", previous);
-    let mut sum_count = 0;
+    let mut window_count = 0;
     for window in scans.windows(3) {
         let sum = window.iter().sum::<i32>();
         if sum > previous {
-            sum_count += 1;
+            window_count += 1;
         }
         previous = sum;
     }
-    println!("{}", sum_count);
+    println!("Task 2: {}", window_count);
 }
