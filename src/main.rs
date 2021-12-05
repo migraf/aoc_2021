@@ -29,7 +29,7 @@ fn day_3() {
     }
 
     impl DiagnosticReport {
-        fn power_consumption(&self) -> i32 {
+        fn one_counts(&self) -> Vec<i32> {
             let mut one_counts = vec![0; 12];
             for diagnostic in &self.diagnostics {
                 let numbers: Vec<i32> = diagnostic
@@ -42,13 +42,19 @@ fn day_3() {
                     }
                 }
             }
+            one_counts
+        }
+        fn power_consumption(&self) -> i32 {
+            let one_counts = self.one_counts();
             let total = &self.diagnostics.len() / 2;
 
-
+            // if the one count is greater than the total, set a binary 1 for the gamma rate
             let gamma_rate_binary = one_counts
                 .iter()
-                .map(|count| if *count > total { 1 } else { 0 })
+                .map(|count| if *count > total as i32 { 1 } else { 0 })
                 .collect::<Vec<i32>>();
+
+
             let epsilon_rate_binary = gamma_rate_binary
                 .iter()
                 .map(|bit| if *bit == 1 { 0 } else { 1 })
@@ -72,7 +78,36 @@ fn day_3() {
 
             println!("Gamma {:?}, Epsilon {:?}", gamma_rate, epsilon_rate);
             return gamma_rate * epsilon_rate;
+        }
 
+        fn life_support_rating(&self) -> i32 {
+            let one_counts = self.one_counts();
+            let total = &self.diagnostics.len() / 2;
+            let mut oxygen_rating: Vec<String> = Vec::new();
+            let mut co2_rating: Vec<String> = Vec::new();
+            for diagnostic in &self.diagnostics {
+                let mut add_oxygen: bool = true;
+                let mut add_co2: bool = true;
+                for one_count in &one_counts {
+                    if *one_count > total as i32 {
+                        add_co2 = false;
+                    } else {
+                        add_oxygen = false;
+                    }
+                }
+                if add_oxygen {
+                    oxygen_rating.push(diagnostic.clone());
+                }
+                if add_co2 {
+                    co2_rating.push(diagnostic.clone());
+                }
+            }
+
+            println!("Oxygen {:?}, CO2 {:?}", oxygen_rating, co2_rating);
+
+
+
+            0
         }
     }
 
@@ -82,8 +117,10 @@ fn day_3() {
         epsilon_rate: 0,
     };
     let power_consumption = diagnostic_report.power_consumption();
+    let life_support = diagnostic_report.life_support_rating();
 
-    println!("Power consumption task 1 {:?}", power_consumption);
+    println!("Power consumption: {:?}", power_consumption);
+    println!("Life support {:?}", life_support);
 }
 
 fn day_2() {
